@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secret Questions</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.6s;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background: #333;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .poll button {
+      margin-top: 15px;
+    }
+  </style>
+
+  <!-- EMAILJS SCRIPT -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("tw0FzqZl3dLdjGzj"); // <-- Your Public Key
+    })();
+  </script>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+  let answers = {};
+  const app = document.getElementById("app");
+
+  const themes = [
+    "linear-gradient(135deg, #ff9a9e, #fad0c4)",
+    "linear-gradient(135deg, #a1c4fd, #c2e9fb)",
+    "linear-gradient(135deg, #d4fc79, #96e6a1)",
+    "linear-gradient(135deg, #fbc2eb, #a6c1ee)",
+    "linear-gradient(135deg, #fddb92, #d1fdff)"
+  ];
+
+  function setTheme(i) {
+    document.body.style.background = themes[i];
+  }
+
+  /* LOGIN */
+  function loginPage() {
+    setTheme(0);
+    app.innerHTML = `
+      <h2>Login</h2>
+      <input id="username" placeholder="Enter username" />
+      <button onclick="start()">Continue</button>
+    `;
+  }
+
+  function start() {
+    const u = document.getElementById("username").value.trim();
+    if (!u) return;
+    answers.username = u;
+    q1();
+  }
+
+  /* Q1 */
+  function q1() {
+    setTheme(0);
+    app.innerHTML = `
+      <h2>second option kalang ba?</h2>
+      <div class="poll">
+        <button onclick="q1Answer('yes')">Yes</button>
+        <button onclick="q1Answer('no')">No</button>
+      </div>
+    `;
+  }
+
+  function q1Answer(c) {
+    answers.q1 = c;
+    alert(c === "yes" ? "araaaay 😞, desurv" : "palaban ka ha💅, gorabels");
+    q2();
+  }
+
+  /* Q2 */
+  function q2() {
+    setTheme(1);
+    app.innerHTML = `
+      <h2>kung ang english ng tubig ay water, pwede ba ako pa last hug?</h2>
+      <div class="poll">
+        <button onclick="q2Answer('yes')">Yes</button>
+        <button onclick="q2Answer('no')">No</button>
+      </div>
+    `;
+  }
+
+  function q2Answer(c) {
+    answers.q2 = c;
+    alert(c === "yes"
+      ? "uto-uto HAHAHAHHA, do jk, labyu mwa"
+      : "di wag 😒"
+    );
+    q3();
+  }
+
+  /* Q3 */
+  function q3() {
+    setTheme(2);
+    app.innerHTML = `
+      <h2>lab moko?</h2>
+      <div class="poll">
+        <button onclick="q3Answer('yes')">Yes</button>
+        <button onclick="q3Answer('no')">No</button>
+      </div>
+    `;
+  }
+
+  function q3Answer(c) {
+    answers.q3 = c;
+    alert(c === "yes"
+      ? "ayieeee sige tayo na 🫨, mahirap pag laging naka upo ih"
+      : "di wag, blok ka sakin"
+    );
+    q4();
+  }
+
+  /* Q4 */
+  function q4() {
+    setTheme(3);
+    app.innerHTML = `
+      <h2>natugnawan ka?</h2>
+      <div class="poll">
+        <button onclick="q4Answer('yes')">Yes</button>
+        <button onclick="q4Answer('no')">No</button>
+      </div>
+    `;
+  }
+
+  function q4Answer(c) {
+    answers.q4 = c;
+    alert(c === "yes" ? "sa batasan na" : "naol hot");
+    q5();
+  }
+
+  /* Q5 – PRAYER (LAST) */
+  function q5() {
+    setTheme(4);
+    app.innerHTML = `
+      <h2>nag pray kana ba ngayong 🌞?</h2>
+      <div class="poll">
+        <button onclick="q5Answer('yes')">Yes</button>
+        <button onclick="q5Answer('no')">No</button>
+      </div>
+    `;
+  }
+
+  function q5Answer(c) {
+    answers.q5 = c;
+
+    app.innerHTML = c === "yes"
+      ? `
+        <h2>🙏</h2>
+        <p><strong>1 Thessalonians 5:17</strong></p>
+        <p>"Pray without ceasing."</p>
+        <p>God delights in a prayerful heart ❤️</p>
+      `
+      : `
+        <h2>💔</h2>
+        <p><strong>Matthew 11:28</strong></p>
+        <p>"Come to me, all who are weary and burdened, and I will give you rest."</p>
+        <p>Go talk to Him. He's waiting.</p>
+      `;
+
+    console.log("User Answers:", answers);
+
+    // SEND EMAIL VIA EMAILJS
+    sendEmail(answers);
+  }
+
+  // SEND EMAIL FUNCTION
+  function sendEmail(data) {
+    emailjs.send(
+      "service_8uetqa3", // <-- Your Service ID
+      "template_alu6pgo", // <-- Your Template ID
+      {
+        username: data.username,
+        q1: data.q1,
+        q2: data.q2,
+        q3: data.q3,
+        q4: data.q4,
+        q5: data.q5
+      }
+    ).then(
+      () => console.log("✅ Email sent successfully"),
+      (error) => console.error("❌ Email failed:", error)
+    );
+  }
+
+  loginPage();
+</script>
+
+</body>
+</html>
